@@ -3,9 +3,12 @@
   align-items: baseline;
   justify-content: space-between;
   width: 50%;
-  
-  
 }
 .todo-list__todo {
   width: 45%;
+}
+
+.todo-list__button-up--hidden,
+.todo-list__button-down--hidden {
+  display: none;
 }
