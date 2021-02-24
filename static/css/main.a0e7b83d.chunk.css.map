@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/App.css"],"names":[],"mappings":"AAAA,iBACE,YAAa,CACb,oBAAqB,CACrB,6BAA8B,CAC9B,SAGF,CACA,iBACE,SACF","file":"main.a0e7b83d.chunk.css","sourcesContent":[".todo-list__item {\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  width: 50%;\n  \n  \n}\n.todo-list__todo {\n  width: 45%;\n}\n"]}
