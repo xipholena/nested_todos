@@ -2,15 +2,15 @@
 import React, {useState} from 'react'
 import classNames from 'classnames'
 
-export const Todo = ({todos, setTodos}) => {
-  console.log(todos);
+export const Todo = ({todos, setTodos, callCommonTodos}) => {
+  console.log('start',todos);
   function useForceUpdate(){
     const [value, setValue] = useState(0); 
+   // console.log('force update - value', value);
     return () => setValue(value => value + 1); 
   }
   const forceUpdate = useForceUpdate();
 
-  const [localTodos, setLocalTodos] = useState(todos);
 
   const [todoTitle, setTodoTitle] = useState('');
 
@@ -26,11 +26,15 @@ export const Todo = ({todos, setTodos}) => {
       index: todos.length + 1,
     }
     todos.push(newTodo);
+    /*setTodos(currentState => ([
+      ...currentState,
+      newTodo,
+    ]))*/
     setTodoTitle('');
   }
 
-  const removeListHandler = (id, subId) => {
-    setLocalTodos(localTodos=> localTodos.filter(item=> item.id !== id));
+  const removeTodoHandler = (id, subId) => {
+    setTodos(todos=> todos.filter(item=> item.id !== id));
   }
 
   const handleSort = () => {
@@ -42,13 +46,14 @@ export const Todo = ({todos, setTodos}) => {
     
     const newTodos = [...todos].map((item, i, arr) => {
       if(item.id === id){ 
-         item.index-- 
+         item.index-- //!!!!
          if(arr[i-1]) {
           arr[i-1].index++
          }
       }
       return item
     })
+    //setTodos(newTodos);
     handleSort();
     forceUpdate();
   }
@@ -63,22 +68,35 @@ export const Todo = ({todos, setTodos}) => {
       }
       return item
     })
+    //setTodos(newTodos)
     handleSort();
     forceUpdate();
   }
 
   const addSublist = (id) => {
-   
     const newTodos = [...todos].map(item=> {
       if(item.id === id) {
-        item.sublist = [{sublist: [], sublistId: +(new Date()), id: +(new Date())*2, index: 0}];
+        item.sublist = [{sublist: [], sublistId: +(new Date())/2, id: +(new Date())*2, index: 0, /*notStarter: true,*/}, ];
         item.sublistId =  +(new Date());
+        item.notStarter = true;
         
+       // console.log(item);
+       // console.log(todos);
       }
       return item
     })
-    
+    //setTodos(newTodos) //означает сделать todo этого вложенного компонента общим для всех=(
       forceUpdate();
+  }
+
+  const getAllTodos = () => {
+    forceUpdate();
+    console.log(todos);
+  }
+  const handleListRemoving = (id, subId) => {
+    console.log(id)
+    //console.log(todos);
+    getAllTodos()
   }
 
   return (
@@ -103,17 +121,24 @@ export const Todo = ({todos, setTodos}) => {
             
           > Add Sublist </button>
           <button 
-            onClick={()=>removeListHandler(todo.id, todo.sublistId)}
+            onClick={()=>removeTodoHandler(todo.id, todo.sublistId)}
           >
             Remove
           </button>
-          <button>Remove sublist</button>
+          <button
+            onClick={()=>{
+              handleListRemoving(todo.id, todo.sublistId);
+              callCommonTodos(todo.sublistId);
+            }}
+          >Remove sublist
+          </button>
 
           {todo.sublist && todo.sublist.length
             ? <div> 
               <Todo 
                 todos={todo.sublist}
                 setTodos={setTodos}
+                callCommonTodos={callCommonTodos}
             /> 
             </div>
             : null
